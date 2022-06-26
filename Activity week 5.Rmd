@@ -1,0 +1,48 @@
+---
+title: "Week 5 Visualization"
+author: "Larissa"
+date: '2022-06-26'
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(knitr)
+```
+
+## Top 15 Number of High Risk per Hospital
+
+Below chart shows the Metropolitan or Micropolitan Area in the United States with the top 15 numbers of high risk of covid-19 per hospital. The color of the bar chart indicates the state of the area. We can see that multiple areas in Florida show up in the top 15 of high risk per hospital.
+
+``` {r , include = FALSE}
+library (readr)
+url<- "https://raw.githubusercontent.com/fivethirtyeight/data/master/covid-geography/mmsa-icu-beds.csv" 
+covid<-read_csv(url)
+library (tidyr)
+library(dplyr)
+library(tidyverse)
+covid_clean <- covid %>%
+separate(MMSA,sep=",",into = c("Area","State"))  %>%
+ top_n(15, high_risk_per_hospital)
+
+```
+
+
+
+```{r, echo = FALSE }
+library(ggplot2)
+ggplot(data= covid_clean, aes(x=Area,y=high_risk_per_hospital, fill=State))+geom_bar(stat="identity")+ coord_flip() + xlab("Area")+ylab("Number of high risk per hospital") + labs(title = "Top 15 High Risk per Hospital by \n Metropolitan or Micropolitan Area") +scale_y_continuous(expand=expansion(mult=c(0,0.15))) + theme(text = element_text(size = 10)) #+ theme(legend.position = "bottom")
+
+```
+
+
+
+## The Number of Hospital
+
+Despite the number of high risk, some areas only have few number of hospitals.
+
+```{r, echo = FALSE }
+
+ggplot(data= covid_clean, aes(x=Area,y=hospitals, fill=State))+geom_bar(stat="identity")+ coord_flip()+ xlab("Area")+
+ylab("Number of hospital")  + labs(title = "Available Hospitals in the Area \n of Top 15 High Risk per Hospital") +scale_y_continuous(expand=expansion(mult=c(0,0.15)))+ theme(text = element_text(size = 10)) 
+```
